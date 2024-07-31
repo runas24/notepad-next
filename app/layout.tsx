@@ -14,9 +14,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <title>Notepad</title>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex">
         <Menu />
-        <main className="flex-1 p-8 md:ml-64">
+        <main className="flex-1 p-8 ml-64">
           {children}
         </main>
       </body>
