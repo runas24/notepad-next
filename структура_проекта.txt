@@ -1,0 +1,531 @@
+﻿Структура проекта
+
+
+.next\
+app\
+    globals.css
+    layout.tsx
+    page.tsx
+node_modules\
+public\
+    favicon.ico
+    next.svg
+    vercel.svg
+src\
+    components\
+        ErrorBoundary.tsx
+        Menu.tsx
+        Note.tsx
+        NoteList.tsx
+        Notepad.tsx
+    hooks\
+        useNotes.ts
+    lib\
+        supabaseClient.ts
+    pages\
+        _app.tsx
+    styles\
+        global.css
+    utils\
+        errorHandler.ts
+.eslintrc.json
+.gitignore
+errorHandler.js
+eslint.config.mjs
+next-env.d.ts
+next.config.mjs
+package-lock.json
+package.json
+postcss.config.js
+postcss.config.mjs
+README.md
+setup.js
+structure.txt
+tailwind.config.js
+tailwind.config.ts
+tree.ps1
+tsconfig.json
+структура_проекта.txt
+
+
+### Код файла: next-env.d.ts
+
+
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference types="next/navigation-types/compat/navigation" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.
+
+
+
+### Код файла: tailwind.config.ts
+
+
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;
+
+
+
+### Код файла: app\globals.css
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-gray-800;
+}
+
+h1 {
+  @apply text-4xl font-bold text-center my-8 text-primary;
+}
+
+textarea {
+  @apply w-full p-4 border rounded-lg resize-none text-lg;
+}
+
+button {
+  @apply px-4 py-2 rounded-md text-white bg-primary hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-primary;
+}
+
+.menu {
+  @apply bg-primary text-white p-4 h-full fixed top-0 left-0 w-64;
+}
+
+.menu-item {
+  @apply block py-2 px-4 rounded-md hover:bg-opacity-80;
+}
+
+.menu-item a {
+  @apply text-white;
+}
+
+
+### Код файла: app\layout.tsx
+
+
+import React, { ReactNode } from 'react';
+import './globals.css';
+import Menu from '../src/components/Menu';
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <html>
+      <head>
+        <title>Notepad</title>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body className="flex">
+        <Menu />
+        <main className="flex-1 p-8 ml-64">
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+};
+
+export default Layout;
+
+
+### Код файла: app\page.tsx
+
+
+"use client";  // Помечаем файл как клиентский
+
+import React from 'react';
+import Notepad from '../src/components/Notepad';
+import Menu from '../src/components/Menu';
+
+const Page: React.FC = () => {
+  return (
+    <div className="flex">
+      <Menu />
+      <main className="flex-1 p-8">
+        <Notepad />
+      </main>
+    </div>
+  );
+};
+
+export default Page;
+
+
+
+### Код файла: src\components\ErrorBoundary.tsx
+
+
+import React, { Component, ReactNode } from 'react';
+
+interface Props {
+    children: ReactNode;
+}
+
+interface State {
+    hasError: boolean;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(): State {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+        console.error('Uncaught error:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <h1>Something went wrong.</h1>;
+        }
+
+        return this.props.children;
+    }
+}
+
+export default ErrorBoundary;
+
+
+### Код файла: src\components\Menu.tsx
+
+
+"use client";
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+
+const Menu: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div>
+      <nav className="hidden md:flex fixed top-0 left-0 h-full bg-gray-800 text-white w-64 p-4">
+        <ul>
+          <li className="menu-item mb-2"><Link href="/">Home</Link></li>
+          <li className="menu-item mb-2"><Link href="/about">About</Link></li>
+          <li className="menu-item"><Link href="/contact">Contact</Link></li>
+        </ul>
+      </nav>
+
+      <button 
+        className="md:hidden fixed bottom-0 left-0 w-full bg-gray-800 text-white py-2"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        Menu
+      </button>
+      
+      {isOpen && (
+        <div className="md:hidden fixed bottom-0 left-0 w-full bg-gray-800 text-white p-4">
+          <ul>
+            <li className="menu-item mb-2"><Link href="/">Home</Link></li>
+            <li className="menu-item mb-2"><Link href="/about">About</Link></li>
+            <li className="menu-item"><Link href="/contact">Contact</Link></li>
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Menu;
+
+
+
+### Код файла: src\components\Note.tsx
+
+
+
+import React, { FC } from 'react';
+
+interface NoteProps {
+    id: number;
+    content: string;
+    onDelete: (id: number) => void;
+}
+
+const Note: FC<NoteProps> = ({ id, content, onDelete }) => {
+    return (
+        <div className="note">
+            <p>{content}</p>
+            <button onClick={() => onDelete(id)}>Delete</button>
+        </div>
+    );
+};
+
+export default Note;
+
+
+
+### Код файла: src\components\NoteList.tsx
+
+
+
+import React, { FC } from 'react';
+import Note from './Note';
+import useNotes from '../hooks/useNotes';
+
+const NoteList: FC = () => {
+    const { notes, addNote, deleteNote } = useNotes();
+
+    const handleAddNote = () => {
+        const content = prompt('Enter note content:');
+        if (content) {
+            addNote(content);
+        }
+    };
+
+    return (
+        <div>
+            <button onClick={handleAddNote}>Add Note</button>
+            {notes.map(note => (
+                <Note key={note.id} id={note.id} content={note.content} onDelete={deleteNote} />
+            ))}
+        </div>
+    );
+};
+
+export default NoteList;
+
+
+
+### Код файла: src\components\Notepad.tsx
+
+
+"use client";
+
+import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabaseClient';
+import debounce from 'lodash/debounce';
+
+const Notepad: React.FC = () => {
+  const [text, setText] = useState('');
+  const editorRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('Error fetching notes:', error);
+      } else {
+        if (data) {
+          setText(data.content ?? '');
+          localStorage.setItem('notepadContent', data.content ?? '');
+        }
+      }
+    };
+
+    fetchNotes();
+  }, []);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (editor) {
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }, [text]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLDivElement>) => {
+    const newText = event.target.innerHTML;
+    setText(newText);
+    localStorage.setItem('notepadContent', newText);
+    saveNoteDebounced();
+  };
+
+  const saveNote = async () => {
+    const { data, error } = await supabase
+      .from('notes')
+      .upsert([
+        { id: 1, title: 'My Note', content: text }
+      ]);
+
+    if (error) {
+      console.error('Error saving note:', error);
+    } else {
+      console.log('Note saved:', data);
+    }
+  };
+
+  const saveNoteDebounced = debounce(() => {
+    saveNote();
+  }, 500);
+
+  return (
+    <motion.div 
+      className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div 
+        contentEditable
+        ref={editorRef}
+        className="textarea border rounded-lg p-4"
+        dangerouslySetInnerHTML={{ __html: text }}
+        onInput={handleChange}
+        onBlur={() => {
+          saveNoteDebounced();
+        }}
+      />
+    </motion.div>
+  );
+};
+
+export default Notepad;
+
+
+
+### Код файла: src\hooks\useNotes.ts
+
+
+
+import { useState } from 'react';
+
+interface Note {
+    id: number;
+    content: string;
+}
+
+const useNotes = () => {
+    const [notes, setNotes] = useState<Note[]>([]);
+
+    const addNote = (content: string) => {
+        setNotes([...notes, { id: Date.now(), content }]);
+    };
+
+    const deleteNote = (id: number) => {
+        setNotes(notes.filter(note => note.id !== id));
+    };
+
+    return { notes, addNote, deleteNote };
+};
+
+export default useNotes;
+
+
+
+### Код файла: src\lib\supabaseClient.ts
+
+
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
+
+### Код файла: src\pages\_app.tsx
+
+
+
+import { AppProps } from 'next/app';
+import '../styles/global.css';
+
+const MyApp = ({ Component, pageProps }: AppProps) => {
+    return <Component {...pageProps} />;
+};
+
+export default MyApp;
+
+
+
+### Код файла: src\styles\global.css
+
+
+/* Global styles */
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+
+/* Стиль для контейнера редактора */
+.textarea {
+    width: 100%;
+    height: 400px;
+    background: #f7f7f7;
+  }
+  
+  /* Стиль для меню */
+  .mobile-menu {
+    display: none; /* Скрыть меню по умолчанию */
+  }
+  
+  /* Отображать меню только на мобильных устройствах */
+  @media (max-width: 768px) {
+    .mobile-menu {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      z-index: 10;
+    }
+  
+    /* Стили для кнопок меню */
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: #e0e0e0;
+      border: none;
+      text-align: center;
+      cursor: pointer;
+    }
+  
+    .tab:hover {
+      background: #d0d0d0;
+    }
+  }
+  
+
+
+### Код файла: src\utils\errorHandler.ts
+
+
+
+export const handleError = (error: Error) => {
+    console.error('An error occurred:', error);
+    // Here you can send the error to a logging service
+};
+
