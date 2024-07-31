@@ -2,9 +2,7 @@
 "use client";
 
 import React from 'react';
-import dynamic from 'next/dynamic';
-
-const Notepad = dynamic(() => import('../src/components/Notepad'), { ssr: false });
+import Notepad from '../src/components/Notepad';
 
 const Page: React.FC = () => {
   return (

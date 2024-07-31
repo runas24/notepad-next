@@ -1,9 +1,7 @@
 
 import React, { ReactNode } from 'react';
-import dynamic from 'next/dynamic';
 import './globals.css';
-
-const Menu = dynamic(() => import('../src/components/Menu'), { ssr: false });
+import Menu from '../src/components/Menu';
 
 interface LayoutProps {
   children: ReactNode;
