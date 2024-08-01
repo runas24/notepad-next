@@ -1,9 +1,7 @@
 
 import React, { ReactNode } from 'react';
-import dynamic from 'next/dynamic';
 import './globals.css';
-
-const Menu = dynamic(() => import('../src/components/Menu'), { ssr: false });
+import Menu from '../src/components/Menu';
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,9 +14,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <title>Notepad</title>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex">
         <Menu />
-        <main className="flex-1 p-8 md:ml-64">
+        <main className="flex-1 p-8 ml-64">
           {children}
         </main>
       </body>
