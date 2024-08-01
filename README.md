@@ -11,3 +11,4 @@ This is a Next.js project with a notepad application and Supabase integration.
 ## Usage
 
 Visit `http://localhost:3000` to view the application.
+выв
